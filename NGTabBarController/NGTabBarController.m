@@ -374,14 +374,16 @@ static char tabBarImageViewKey;
         if (indexOfViewControllerThatGetsHidden >= 0) {
             // add image of tabBar to the viewController's view to get a nice animation
             UIViewController *viewControllerThatGetsHidden = [navigationController.viewControllers objectAtIndex:indexOfViewControllerThatGetsHidden];
-            UIImageView *tabBarImageRepresentation = [self.tabBar imageViewRepresentation];
-            
-            tabBarImageRepresentation.frame = CGRectMake(0.f,viewControllerThatGetsHidden.view.frame.origin.y + viewControllerThatGetsHidden.view.frame.size.height - tabBarImageRepresentation.frame.size.height,
-                                         tabBarImageRepresentation.frame.size.width,tabBarImageRepresentation.frame.size.height);
-
-            objc_setAssociatedObject(viewControllerThatGetsHidden, &tabBarImageViewKey, tabBarImageRepresentation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            [viewControllerThatGetsHidden.view addSubview:tabBarImageRepresentation];
-            [self setTabBarHidden:YES animated:NO];
+            if (!viewControllerThatGetsHidden.hidesBottomBarWhenPushed && !objc_getAssociatedObject(viewControllerThatGetsHidden, &tabBarImageViewKey)) {
+                UIImageView *tabBarImageRepresentation = [self.tabBar imageViewRepresentation];
+                
+                tabBarImageRepresentation.frame = CGRectMake(0.f,viewControllerThatGetsHidden.view.frame.origin.y + viewControllerThatGetsHidden.view.frame.size.height - tabBarImageRepresentation.frame.size.height,
+                                                             tabBarImageRepresentation.frame.size.width,tabBarImageRepresentation.frame.size.height);
+                
+                objc_setAssociatedObject(viewControllerThatGetsHidden, &tabBarImageViewKey, tabBarImageRepresentation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                [viewControllerThatGetsHidden.view addSubview:tabBarImageRepresentation];
+                [self setTabBarHidden:YES animated:NO];
+            }
         }
     }
 }
